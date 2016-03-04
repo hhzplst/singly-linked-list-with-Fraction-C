@@ -33,7 +33,9 @@ void insertMenuWanqiC(void);
 void removeMenuWanqiC(void);
 int findGCDWanqiC(int, int);
 FractionPtrWanqi createFractionWanqiC(void);
+FractionNodePtrWanqi createFractionNodeWanqiC(void);
 void printFractionInfoWanqiC(FractionPtrWanqi);
+void printFractionNodeWanqiC(FractionNodePtrWanqi);
 
 bool isEmptyWanqiC(FractionListWanqi);
 int getLengthWanqiC(FractionListWanqi);
@@ -46,12 +48,14 @@ void displayListWanqiC(FractionListWanqi);
 
 int main() {
 
-  int outerOption, insertOption, removeOption;
+  int outerOption, insertOption, removeOption, index;
+
   FractionListPtrWanqi myListPtr = 
-                            (FractionListPtrWanqi) malloc(sizeof(FractionListWanqi));
-  FractionNodePtrWanqi myFractionNodePtr = 
-                            (FractionNodePtrWanqi) malloc(sizeof(FractionNodeWanqi));
-  FractionPtrWanqi newFractionPtr;
+                (FractionListPtrWanqi) malloc(sizeof(FractionListWanqi));
+  FractionListWanqi myList;
+  myListPtr = &myList;
+
+  FractionNodePtrWanqi newFractionNodePtr = NULL;                      
 
   printf("CIS 27 - C Programming\n"
          "Laney College\n"
@@ -69,6 +73,8 @@ int main() {
 
     switch(outerOption) {
       case 1:
+        // isEmptyWanqiC(myList);
+        displayListWanqiC(myList);
         break;
       case 2:
         do {
@@ -77,28 +83,26 @@ int main() {
           scanf("%d", &insertOption);
 
           switch(insertOption) {
-            case 1:
-              newFractionPtr = createFractionWanqiC();
-              printFractionInfoWanqiC(newFractionPtr);
-
-              myFractionNodePtr->frPtr = newFractionPtr;
-              myFractionNodePtr->next = NULL;
-
-              insertFirstWanqiC(myListPtr, myFractionNodePtr);
-              printf("checking if the list is empty: %s", isEmptyWanqiC(*myListPtr)? "true":"false");
-              printf("getting the length of the list: %d", getLengthWanqiC(*myListPtr));
+            case 1: 
+              newFractionNodePtr = createFractionNodeWanqiC();
+              insertFirstWanqiC(myListPtr, newFractionNodePtr);
               break;
             case 2:
+              printf("\n       After which node would you want to insert (start at 1): ");
+              scanf("%d", &index);
+              newFractionNodePtr = createFractionNodeWanqiC();
+              insertAtWanqiC(myListPtr, newFractionNodePtr, index);
               break;
             case 3:
 
               break;
             case 4:
+              displayListWanqiC(myList);
               break;
             case 5:
               break;
             default:
-              printf("\n    Wrong option!\n");
+              printf("\n\tWrong option!\n");
           }
         } while (insertOption != 5);
         break;
@@ -183,6 +187,19 @@ FractionPtrWanqi createFractionWanqiC() {
   return tempPtr;
 }
 
+FractionNodePtrWanqi createFractionNodeWanqiC() {
+  FractionPtrWanqi newFractionPtr = NULL;
+  FractionNodePtrWanqi myFractionNodePtr = NULL;
+
+  newFractionPtr = createFractionWanqiC();
+
+  myFractionNodePtr = (FractionNodePtrWanqi) malloc(sizeof(FractionNodeWanqi));
+  myFractionNodePtr->frPtr = newFractionPtr;
+  myFractionNodePtr->next = NULL;
+
+  return myFractionNodePtr;
+}
+
 int findGCDWanqiC(int n, int m) {
   int gcd, remainder;
   
@@ -201,34 +218,40 @@ int findGCDWanqiC(int n, int m) {
 
 void printFractionInfoWanqiC(FractionPtrWanqi frPtr) {
   if (frPtr == NULL)
-    printf("\n           Memory Location: NULL\n");
+    printf("\n\t\tMemory Location: NULL\n");
   else {
-    printf("\n           Memory Location: %p\n"
-           "           Numerator:       %d\n"
-           "           Denominator:     %d\n", frPtr, frPtr->num, frPtr->denom);
+    printf("\n\t\tMemory Location: %p\n"
+           "\t\tNumerator:       %d\n"
+           "\t\tDenominator:     %d\n", frPtr, frPtr->num, frPtr->denom);
     if ((frPtr->num)%(frPtr->denom) == 0)
-      printf("           Result:      %d\n", (frPtr->num)/(frPtr->denom));
+      printf("\t\tResult:      %d\n", (frPtr->num)/(frPtr->denom));
   }
 }
+
+void printFractionNodeWanqiC(FractionNodePtrWanqi frNodePtr) {
+  printf("\n\t  Current fraction node is at: %p\n\
+          Linking to the next node at: %p\n\
+          Having the Fraction information:\n"
+          , frNodePtr, frNodePtr->next);
+  printFractionInfoWanqiC(frNodePtr->frPtr);
+}
+
 
 bool isEmptyWanqiC(FractionListWanqi myList) {
   return (myList == NULL)? true:false;
 }
 
 int getLengthWanqiC(FractionListWanqi myList) {
-  int count = 0;
+  int count = 1;
   FractionListWanqi currentNodePtr = myList;
   
-  if (isEmptyWanqiC(myList))
+  if (!currentNodePtr)
     return 0;
 
-  // printf("current node Ptress: %p", currentNodePtr->next);
-
-  while (currentNodePtr) {
+  while (currentNodePtr->next != NULL) {
     count++;
     currentNodePtr = currentNodePtr->next;
   };
-
 
   return count;
 }
@@ -236,10 +259,11 @@ int getLengthWanqiC(FractionListWanqi myList) {
 
 void insertFirstWanqiC(FractionListPtrWanqi myListPtr, 
                       FractionNodePtrWanqi newNodePtr) {
-  printf("\n       Inserting the Fraction at the Beginning of the List...\n");
+  printf("\n       Inserting the Fraction at the Beginning of the List...");
   if (*myListPtr != NULL)
     newNodePtr->next = *myListPtr;
   *myListPtr = newNodePtr;
+  printf("Done!\n");
 }
 
 void appendWanqiC(FractionListPtrWanqi myListPtr,
@@ -262,36 +286,36 @@ void insertAtWanqiC(FractionListPtrWanqi myListPtr,
   int myListLength = getLengthWanqiC(*myListPtr), count = 1;
   FractionNodePtrWanqi currentNodePtr = *myListPtr;
 
-  if(index == 0 || myListLength == 0)
+  printf("\n       Inserting the Fraction at index %d ...", index);
+
+  if (index < 1 || myListLength == 0)
     insertFirstWanqiC(myListPtr, newNodePtr);
-  if(index >= myListLength)
+  else if (index >= myListLength)
     appendWanqiC(myListPtr, newNodePtr);
+  else {
+    while(count < index){
+      count++;
+      currentNodePtr = currentNodePtr->next;
+    }
 
-  while(count < index){
-    count++;
-    currentNodePtr = currentNodePtr->next;
+    newNodePtr->next = currentNodePtr->next;
+    currentNodePtr->next = newNodePtr;
+    printf("Done!\n");
   }
-
-  newNodePtr->next = currentNodePtr->next;
-  currentNodePtr->next = newNodePtr;
 }
 
 void displayListWanqiC(FractionListWanqi myList) {
-  printf("       Here's the information about the current List:\n");
   FractionListWanqi currentNodePtr = myList;
-  printf("here's the memory location of currentNodePtr: %p", currentNodePtr);
-  printf("Length of the list: %d", getLengthWanqiC(myList));
-
-  // for (int i = 0; i < getLengthWanqiC(myList); i++) {
-  //   printf("\n      At index %d\n"
-  //                     "Fraction memory Location: %p\n"
-  //                     "Fraction Numerator:       %d\n"
-  //                     "Fraction Denominator:     %d\n"
-  //                     "Next Node in memory:      %p\n\n",
-  //                      i, currentNodePtr->frPtr, currentNodePtr->frPtr->num, 
-  //                      currentNodePtr->frPtr->denom, currentNodePtr->next);
-  //   currentNodePtr = currentNodePtr->next;
-  // }
+  if (getLengthWanqiC(myList) == 0) {
+    printf("\n  Empty List!\n");
+  } else {
+    printf("\n\tHere's the information about the current List:\n\n\
+          Length of the list: %d\n", getLengthWanqiC(myList));
+    do {
+      printFractionNodeWanqiC(currentNodePtr);
+      currentNodePtr = currentNodePtr->next;
+    } while (currentNodePtr);
+  }
 }
 
 
