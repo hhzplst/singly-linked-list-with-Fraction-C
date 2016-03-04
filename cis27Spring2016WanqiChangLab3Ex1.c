@@ -94,7 +94,8 @@ int main() {
               insertAtWanqiC(myListPtr, newFractionNodePtr, index);
               break;
             case 3:
-
+              newFractionNodePtr = createFractionNodeWanqiC();
+              appendWanqiC(myListPtr, newFractionNodePtr);
               break;
             case 4:
               displayListWanqiC(myList);
@@ -224,7 +225,7 @@ void printFractionInfoWanqiC(FractionPtrWanqi frPtr) {
            "\t\tNumerator:       %d\n"
            "\t\tDenominator:     %d\n", frPtr, frPtr->num, frPtr->denom);
     if ((frPtr->num)%(frPtr->denom) == 0)
-      printf("\t\tResult:      %d\n", (frPtr->num)/(frPtr->denom));
+      printf("\t\tResult:          %d\n", (frPtr->num)/(frPtr->denom));
   }
 }
 
@@ -259,7 +260,7 @@ int getLengthWanqiC(FractionListWanqi myList) {
 
 void insertFirstWanqiC(FractionListPtrWanqi myListPtr, 
                       FractionNodePtrWanqi newNodePtr) {
-  printf("\n       Inserting the Fraction at the Beginning of the List...");
+  printf("\n       Inserting the Node at the beginning of the list...");
   if (*myListPtr != NULL)
     newNodePtr->next = *myListPtr;
   *myListPtr = newNodePtr;
@@ -269,16 +270,18 @@ void insertFirstWanqiC(FractionListPtrWanqi myListPtr,
 void appendWanqiC(FractionListPtrWanqi myListPtr,
                       FractionNodePtrWanqi newNodePtr) {
   FractionNodePtrWanqi currentNodePtr = *myListPtr;
-  if(currentNodePtr != NULL) {
+
+  printf("\n       Inserting the Node at the end of the list...");
+
+  if(currentNodePtr) {
     while(currentNodePtr->next) 
       currentNodePtr = currentNodePtr->next;
 
     currentNodePtr->next = newNodePtr;
-    newNodePtr->next = NULL;
   } else {
     *myListPtr = newNodePtr;
   }
-
+  printf("Done!\n");
 }
 
 void insertAtWanqiC(FractionListPtrWanqi myListPtr,
@@ -286,7 +289,7 @@ void insertAtWanqiC(FractionListPtrWanqi myListPtr,
   int myListLength = getLengthWanqiC(*myListPtr), count = 1;
   FractionNodePtrWanqi currentNodePtr = *myListPtr;
 
-  printf("\n       Inserting the Fraction at index %d ...", index);
+  printf("\n       Inserting the Node at index %d of the list...", index);
 
   if (index < 1 || myListLength == 0)
     insertFirstWanqiC(myListPtr, newNodePtr);
