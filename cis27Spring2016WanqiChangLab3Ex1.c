@@ -20,7 +20,8 @@ struct FractionNodeWanqiC {
   struct FractionNodeWanqiC* next;
 };
 
-
+typedef struct FractionWanqiC FractionWanqi;
+typedef FractionWanqi* FractionPtrWanqi;
 typedef struct FractionNodeWanqiC FractionNodeWanqi;
 typedef FractionNodeWanqi* FractionNodePtrWanqi;
 typedef FractionNodeWanqi* FractionListWanqi;
@@ -30,25 +31,27 @@ typedef FractionListWanqi* FractionListPtrWanqi;
 void outerMenuWanqiC(void);
 void insertMenuWanqiC(void);
 void removeMenuWanqiC(void);
-int findGCD(int, int);
-struct Fraction* createFractionWanqiC(void);
-void printFractionInfoWanqiC(struct Fraction*);
+int findGCDWanqiC(int, int);
+FractionPtrWanqi createFractionWanqiC(void);
+void printFractionInfoWanqiC(FractionPtrWanqi);
 
-bool isEmptyWanqiC(FractionList);
-int getLengthWanqiC(FractionList);
+bool isEmptyWanqiC(FractionListWanqi);
+int getLengthWanqiC(FractionListWanqi);
 
-void insertFirstWanqiC(FractionListAddr, struct FractionNode*);
-void appendWanqiC(FractionListAddr, struct FractionNode*);
-void insertAtWanqiC(FractionListAddr, struct FractionNode*, int);
+void insertFirstWanqiC(FractionListPtrWanqi, FractionNodePtrWanqi);
+void appendWanqiC(FractionListPtrWanqi, FractionNodePtrWanqi);
+void insertAtWanqiC(FractionListPtrWanqi, FractionNodePtrWanqi, int);
 
-void displayListWanqiC(FractionList);
+void displayListWanqiC(FractionListWanqi);
 
 int main() {
 
   int outerOption, insertOption, removeOption;
-  FractionListAddr myListAddr = (FractionListAddr) malloc(sizeof(FractionList));
-  struct FractionNode* myFractionNode = (struct FractionNode*) malloc(sizeof(struct FractionNode));
-  struct Fraction* newFractionAddr;
+  FractionListPtrWanqi myListPtr = 
+                            (FractionListPtrWanqi) malloc(sizeof(FractionListWanqi));
+  FractionNodePtrWanqi myFractionNodePtr = 
+                            (FractionNodePtrWanqi) malloc(sizeof(FractionNodeWanqi));
+  FractionPtrWanqi newFractionPtr;
 
   printf("CIS 27 - C Programming\n"
          "Laney College\n"
@@ -75,15 +78,15 @@ int main() {
 
           switch(insertOption) {
             case 1:
-              newFractionAddr = createFractionWanqiC();
-              printFractionInfoWanqiC(newFractionAddr);
+              newFractionPtr = createFractionWanqiC();
+              printFractionInfoWanqiC(newFractionPtr);
 
-              myFractionNode->frPtr = newFractionAddr;
-              myFractionNode->next = NULL;
+              myFractionNodePtr->frPtr = newFractionPtr;
+              myFractionNodePtr->next = NULL;
 
-              insertFirstWanqiC(myListAddr, myFractionNode);
-              printf("checking if the list is empty: %s", isEmptyWanqiC(*myListAddr)? "true":"false");
-              printf("getting the length of the list: %d", getLengthWanqiC(*myListAddr));
+              insertFirstWanqiC(myListPtr, myFractionNodePtr);
+              printf("checking if the list is empty: %s", isEmptyWanqiC(*myListPtr)? "true":"false");
+              printf("getting the length of the list: %d", getLengthWanqiC(*myListPtr));
               break;
             case 2:
               break;
@@ -154,11 +157,11 @@ void removeMenuWanqiC() {
 
 }
 
-struct Fraction* createFractionWanqiC() {
-  struct Fraction* tempPtr = NULL;
+FractionPtrWanqi createFractionWanqiC() {
+  FractionPtrWanqi tempPtr = NULL;
   int numTemp, denomTemp, gcd;
 
-  tempPtr = (struct Fraction*) malloc(sizeof(struct Fraction));
+  tempPtr = (FractionPtrWanqi) malloc(sizeof(FractionWanqi));
 
   printf("\n       Please Enter the Numerator: ");
   scanf("%d", &numTemp);
@@ -168,7 +171,7 @@ struct Fraction* createFractionWanqiC() {
     scanf("%d", &denomTemp);
   } while (denomTemp == 0);
 
-  gcd = findGCD(numTemp, denomTemp);
+  gcd = findGCDWanqiC(numTemp, denomTemp);
   tempPtr->num = numTemp/gcd;
 
   if (denomTemp < 0) {
@@ -180,7 +183,7 @@ struct Fraction* createFractionWanqiC() {
   return tempPtr;
 }
 
-int findGCD(int n, int m) {
+int findGCDWanqiC(int n, int m) {
   int gcd, remainder;
   
   while (n != 0){
@@ -196,7 +199,7 @@ int findGCD(int n, int m) {
       return gcd;
 }
 
-void printFractionInfoWanqiC(struct Fraction* frPtr) {
+void printFractionInfoWanqiC(FractionPtrWanqi frPtr) {
   if (frPtr == NULL)
     printf("\n           Memory Location: NULL\n");
   else {
@@ -208,22 +211,22 @@ void printFractionInfoWanqiC(struct Fraction* frPtr) {
   }
 }
 
-bool isEmptyWanqiC(FractionList myList) {
+bool isEmptyWanqiC(FractionListWanqi myList) {
   return (myList == NULL)? true:false;
 }
 
-int getLengthWanqiC(FractionList myList) {
+int getLengthWanqiC(FractionListWanqi myList) {
   int count = 0;
-  FractionList currentNodeAddr = myList;
+  FractionListWanqi currentNodePtr = myList;
   
   if (isEmptyWanqiC(myList))
     return 0;
 
-  // printf("current node address: %p", currentNodeAddr->next);
+  // printf("current node Ptress: %p", currentNodePtr->next);
 
-  while (currentNodeAddr) {
+  while (currentNodePtr) {
     count++;
-    currentNodeAddr = currentNodeAddr->next;
+    currentNodePtr = currentNodePtr->next;
   };
 
 
@@ -231,52 +234,52 @@ int getLengthWanqiC(FractionList myList) {
 }
 
 
-void insertFirstWanqiC(FractionListAddr myListAddr, 
-                      struct FractionNode* newNodeAddr) {
+void insertFirstWanqiC(FractionListPtrWanqi myListPtr, 
+                      FractionNodePtrWanqi newNodePtr) {
   printf("\n       Inserting the Fraction at the Beginning of the List...\n");
-  if (*myListAddr != NULL)
-    newNodeAddr->next = *myListAddr;
-  *myListAddr = newNodeAddr;
+  if (*myListPtr != NULL)
+    newNodePtr->next = *myListPtr;
+  *myListPtr = newNodePtr;
 }
 
-void appendWanqiC(FractionListAddr myListAddr,
-                      struct FractionNode* newNodeAddr) {
-  struct FractionNode* currentNodeAddr = *myListAddr;
-  if(currentNodeAddr != NULL) {
-    while(currentNodeAddr->next) 
-      currentNodeAddr = currentNodeAddr->next;
+void appendWanqiC(FractionListPtrWanqi myListPtr,
+                      FractionNodePtrWanqi newNodePtr) {
+  FractionNodePtrWanqi currentNodePtr = *myListPtr;
+  if(currentNodePtr != NULL) {
+    while(currentNodePtr->next) 
+      currentNodePtr = currentNodePtr->next;
 
-    currentNodeAddr->next = newNodeAddr;
-    newNodeAddr->next = NULL;
+    currentNodePtr->next = newNodePtr;
+    newNodePtr->next = NULL;
   } else {
-    *myListAddr = newNodeAddr;
+    *myListPtr = newNodePtr;
   }
 
 }
 
-void insertAtWanqiC(FractionListAddr myListAddr,
-           struct FractionNode* newNodeAddr, int index) {
-  int myListLength = getLengthWanqiC(*myListAddr), count = 1;
-  struct FractionNode* currentNodeAddr = *myListAddr;
+void insertAtWanqiC(FractionListPtrWanqi myListPtr,
+           FractionNodePtrWanqi newNodePtr, int index) {
+  int myListLength = getLengthWanqiC(*myListPtr), count = 1;
+  FractionNodePtrWanqi currentNodePtr = *myListPtr;
 
   if(index == 0 || myListLength == 0)
-    insertFirstWanqiC(myListAddr, newNodeAddr);
+    insertFirstWanqiC(myListPtr, newNodePtr);
   if(index >= myListLength)
-    appendWanqiC(myListAddr, newNodeAddr);
+    appendWanqiC(myListPtr, newNodePtr);
 
   while(count < index){
     count++;
-    currentNodeAddr = currentNodeAddr->next;
+    currentNodePtr = currentNodePtr->next;
   }
 
-  newNodeAddr->next = currentNodeAddr->next;
-  currentNodeAddr->next = newNodeAddr;
+  newNodePtr->next = currentNodePtr->next;
+  currentNodePtr->next = newNodePtr;
 }
 
-void displayListWanqiC(FractionList myList) {
+void displayListWanqiC(FractionListWanqi myList) {
   printf("       Here's the information about the current List:\n");
-  FractionList currentNodeAddr = myList;
-  printf("here's the memory location of currentNodeAddr: %p", currentNodeAddr);
+  FractionListWanqi currentNodePtr = myList;
+  printf("here's the memory location of currentNodePtr: %p", currentNodePtr);
   printf("Length of the list: %d", getLengthWanqiC(myList));
 
   // for (int i = 0; i < getLengthWanqiC(myList); i++) {
@@ -285,9 +288,9 @@ void displayListWanqiC(FractionList myList) {
   //                     "Fraction Numerator:       %d\n"
   //                     "Fraction Denominator:     %d\n"
   //                     "Next Node in memory:      %p\n\n",
-  //                      i, currentNodeAddr->frPtr, currentNodeAddr->frPtr->num, 
-  //                      currentNodeAddr->frPtr->denom, currentNodeAddr->next);
-  //   currentNodeAddr = currentNodeAddr->next;
+  //                      i, currentNodePtr->frPtr, currentNodePtr->frPtr->num, 
+  //                      currentNodePtr->frPtr->denom, currentNodePtr->next);
+  //   currentNodePtr = currentNodePtr->next;
   // }
 }
 
