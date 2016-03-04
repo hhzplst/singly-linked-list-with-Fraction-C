@@ -44,6 +44,11 @@ void insertFirstWanqiC(FractionListPtrWanqi, FractionNodePtrWanqi);
 void appendWanqiC(FractionListPtrWanqi, FractionNodePtrWanqi);
 void insertAtWanqiC(FractionListPtrWanqi, FractionNodePtrWanqi, int);
 
+void removeFirstWanqiC(FractionListPtrWanqi);
+void removeLastWanqiC(FractionListPtrWanqi);
+void removeAtWanqiC(FractionListPtrWanqi, int);
+void freeFractionNodeWanqiC(FractionNodePtrWanqi);
+
 void displayListWanqiC(FractionListWanqi);
 
 int main() {
@@ -73,7 +78,6 @@ int main() {
 
     switch(outerOption) {
       case 1:
-        // isEmptyWanqiC(myList);
         displayListWanqiC(myList);
         break;
       case 2:
@@ -108,6 +112,32 @@ int main() {
         } while (insertOption != 5);
         break;
       case 3:
+        do {
+
+          removeMenuWanqiC();
+          scanf("%d", &removeOption);
+
+          switch(insertOption) {
+            case 1: 
+              removeFirstWanqiC(myListPtr);
+              break;
+            case 2:
+              printf("\n       Which node would you want to remove (start at 1): ");
+              scanf("%d", &index);
+              removeAtWanqiC(myListPtr, index);
+              break;
+            case 3:
+              removeLastWanqiC(myListPtr);
+              break;
+            case 4:
+              displayListWanqiC(myList);
+              break;
+            case 5:
+              break;
+            default:
+              printf("\n\tWrong option!\n");
+          }
+        } while (insertOption != 5);
         break;
       case 4:
         printf("\n  Fractions and Linked Lists!\n\n");
@@ -289,7 +319,7 @@ void insertAtWanqiC(FractionListPtrWanqi myListPtr,
   int myListLength = getLengthWanqiC(*myListPtr), count = 1;
   FractionNodePtrWanqi currentNodePtr = *myListPtr;
 
-  printf("\n       Inserting the Node at index %d of the list...", index);
+  printf("\n       Inserting the Node after %d-th of the list...", index);
 
   if (index < 1 || myListLength == 0)
     insertFirstWanqiC(myListPtr, newNodePtr);
@@ -305,6 +335,70 @@ void insertAtWanqiC(FractionListPtrWanqi myListPtr,
     currentNodePtr->next = newNodePtr;
     printf("Done!\n");
   }
+}
+
+void removeFirstWanqiC(FractionListPtrWanqi myListPtr) {
+  FractionNodePtrWanqi currentNodePtr = *myListPtr;
+
+  if (!(*myListPtr))
+    printf("\n\tCan't remove from an empty list!");
+  else {
+    printf("\n       Removing the Node at the beginning of the list...");
+    *myListPtr = (*myListPtr)->next;
+    freeFractionNodeWanqiC(currentNodePtr);
+    printf("Done!\n");    
+  }
+};
+
+void removeLastWanqiC(FractionListPtrWanqi myListPtr) {
+  FractionNodePtrWanqi currentNodePtr = *myListPtr;
+
+  printf("\n       Removing the Node at the end of the list...");
+
+  if (!(*myListPtr))
+    printf("\n\tCan't remove from an empty list!\n");
+  else if (!currentNodePtr->next)
+    removeFirstWanqiC(myListPtr);
+  else {
+    while (currentNodePtr->next->next)
+      currentNodePtr = currentNodePtr->next;
+
+    freeFractionNodeWanqiC(currentNodePtr->next);
+    currentNodePtr->next = NULL;
+    printf("Done!\n");
+  }
+}
+
+void removeAtWanqiC(FractionListPtrWanqi myListPtr, int index) {
+  FractionNodePtrWanqi removeNodePtr = *myListPtr;
+  FractionNodePtrWanqi preNodePtr = NULL;
+  int count = 1;
+
+  printf("\n       Removing the %d-th Node...", index);
+
+  if (!(*myListPtr))
+    printf("\n\tCan't remove from an empty list!\n");
+  else if (index <= 1|| !((*myListPtr)->next))
+    removeFirstWanqiC(myListPtr);
+  else if (index >= getLengthWanqiC(*myListPtr))
+    removeLastWanqiC(myListPtr);
+  else {
+    while (count < index) {
+      preNodePtr = removeNodePtr;
+      removeNodePtr = removeNodePtr->next;
+      count++;
+    }
+    preNodePtr->next = removeNodePtr->next;  
+    freeFractionNodeWanqiC(removeNodePtr);
+    printf("Done!\n");
+  }
+
+
+}
+
+void freeFractionNodeWanqiC(FractionNodePtrWanqi frNodePtr) {
+  free(frNodePtr->frPtr);
+  free(frNodePtr);
 }
 
 void displayListWanqiC(FractionListWanqi myList) {
